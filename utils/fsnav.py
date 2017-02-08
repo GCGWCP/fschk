@@ -5,6 +5,7 @@ import os
 import stat
 import xattr
 from chardet.universaldetector import UniversalDetector
+from models import File
 
 
 def traverse(dir):
@@ -43,26 +44,35 @@ def detect_file_encoding(fname):
 
 
 def finfo(fname):
-    os_info = os.stat(fname)
+    f = File
+    info = os.stat(fname)
     print('File Name:', fname)
-    encoding = detect_file_encoding(fname)
-    print('File Encoding:', encoding)
-    fsize = os_info.st_size
-    print('File Size:', fsize)
-    inode = os_info.st_ino
-    print('File Inode:', inode)
-    permissions = oct(os.stat(fname).st_mode)[-3:]
-    print('File Permissions:', permissions)
-    owner = os_info.st_uid
-    print('File Owner:', owner)
-    group = os_info.st_gid
-    print('File Group Owner:', group)
-    last_mod = os_info.st_mtime
-    print('File Last Modified:', last_mod)
-    file_type = stat.S_IFMT(os_info.st_mode)
-    print('File Type:', file_type)
-    ext_attr = xattr.xattr(fname)
-    print('File Extended Attributes', ext_attr.keys())
+    name = fname.split('/')
+    file_name = name[len(name) - 1]
+    f.name = file_name
+    print('File Name:', f.name)
+    root_path = os.path.realpath(fname).split('/')
+    f.root_path = '/'.join(root_path[0:len(root_path) - 1]) + '/'
+    print('File Root Path:', f.root_path)
+    f.size = info.st_size
+    print('File Size:', f.size)
+    f.permissions = oct(os.stat(fname).st_mode)[-3:]
+    print('File Permissions:', f.permissions)
+    f.encoding = detect_file_encoding(fname)
+    print('File Encoding:', f.encoding)
+    f.inode = info.st_ino
+    print('File Inode:', f.inode)
+    f.owner = info.st_uid
+    print('File Owner:', f.owner)
+    f.group = info.st_gid
+    print('File Group Owner:', f.group)
+    f.last_modified = info.st_mtime
+    print('File Last Modified:', f.last_modified)
+    f.file_type = stat.S_IFMT(info.st_mode)
+    print('File Type:', f.file_type)
+    f.ext_attr = xattr.xattr(fname)
+    print('File Extended Attributes', f.ext_attr.keys())
+    return f
 
 
 def main():
