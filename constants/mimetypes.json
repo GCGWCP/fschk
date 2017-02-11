@@ -1,0 +1,297 @@
+mimetype = {
+    {
+        'ext': '.aac',
+        'doctype': 'AAC audio file',
+        'mimetype': 'audio/aac'
+    },
+    {
+        'ext': '.abw',
+        'doctype': 'AbiWord document',
+        'mimetype': 'application/x-abiword'
+    },
+    {
+        'ext': '.arc',
+        'doctype': 'Archive document (multiple files embedded)',
+        'mimetype': 'application/octet-stream'
+    },
+    {
+        'ext': '.avi',
+        'doctype': 'AVI: Audio Video Interleave',
+        'mimetype': 'video/x-msvideo'
+    },
+    {
+        'ext': '.azw',
+        'doctype': 'Amazon Kindle eBook format',
+        'mimetype': 'application/vnd.amazon.ebook'
+    },
+    {
+        'ext': '.bin',
+        'doctype': 'Any kind of binary data',
+        'mimetype': 'application/octet-stream'
+    },
+    {
+        'ext': '.bz',
+        'doctype': 'BZip archive',
+        'mimetype': 'application/x-bzip'
+    },
+    {
+        'ext': '.bz2',
+        'doctype': 'BZip2 archive',
+        'mimetype': 'application/x-bzip2'
+    },
+    {
+        'ext': '.csh',
+        'doctype': 'C-Shell script',
+        'mimetype': 'application/x-csh'
+    },
+    {
+        'ext': '.css',
+        'doctype': 'Cascading Style Sheets (CSS)',
+        'mimetype': 'text/css'
+    },
+    {
+        'ext': '.csv',
+        'doctype': 'Comma-separated values (CSV)',
+        'mimetype': 'text/csv'
+    },
+    {
+        'ext': '.doc',
+        'doctype': 'Microsoft Word',
+        'mimetype': 'application/msword'
+    },
+    {
+        'ext': '.epub',
+        'doctype': 'Electronic publication (EPUB)',
+        'mimetype': 'application/epub+zip'
+    },
+    {
+        'ext': '.gif',
+        'doctype': 'Graphics Interchange Format (GIF)',
+        'mimetype': 'image/gif'
+    },
+    {
+        'ext': '.htm',
+        'doctype': 'HyperText Markup Language (HTML)',
+        'mimetype': 'text/html'
+    },
+    {
+        'ext': '.html',
+        'doctype': 'HyperText Markup Language (HTML)',
+        'mimetype': 'text/html'
+    },
+    {
+        'ext': '.ico',
+        'doctype': 'Icon format',
+        'mimetype': 'image/x-icon'
+    },
+    {
+        'ext': '.ics',
+        'doctype': 'iCalendar format',
+        'mimetype': 'text/calendar'
+    },
+    {
+        'ext': '.jar',
+        'doctype': 'Java Archive (JAR)',
+        'mimetype': 'application/java-archive'
+    },
+    {
+        'ext': '.jpeg',
+        'doctype': 'JPEG images',
+        'mimetype': 'image/jpeg'
+    },
+    {
+        'ext': '.jpg',
+        'doctype': 'JPEG images',
+        'mimetype': 'image/jpeg'
+    },
+    {
+        'ext': '.js',
+        'doctype': 'JavaScript (ECMAScript)',
+        'mimetype': 'application/javascript'
+    },
+    {
+        'ext': '.json',
+        'doctype': 'JSON format',
+        'mimetype': 'application/json'
+    },
+    {
+        'ext': '.mid',
+        'doctype': 'Musical Instrument Digital Interface (MIDI)',
+        'mimetype': 'audio/midi'
+    },
+    {
+        'ext': '.midi',
+        'doctype': 'Musical Instrument Digital Interface (MIDI)',
+        'mimetype': 'audio/midi'
+    },
+    {
+        'ext': '.mpeg',
+        'doctype': 'MPEG Video',
+        'mimetype': 'video/mpeg'
+    },
+    {
+        'ext': '.mpkg',
+        'doctype': 'Apple Installer Package',
+        'mimetype': 'application/vnd.apple.installer+xml'
+    },
+    {
+        'ext': '.odp',
+        'doctype': 'OpenDocuemnt presentation document',
+        'mimetype': 'application/vnd.oasis.opendocument.presentation'
+    },
+    {
+        'ext': '.ods',
+        'doctype': 'OpenDocuemnt spreadsheet document',
+        'mimetype': 'application/vnd.oasis.opendocument.spreadsheet'
+    },
+    {
+        'ext': '.odt',
+        'doctype': 'OpenDocument text document',
+        'mimetype': 'application/vnd.oasis.opendocument.text'
+    },
+    {
+        'ext': '.oga',
+        'doctype': 'OGG audio',
+        'mimetype': 'audio/ogg'
+    },
+    {
+        'ext': '.ogv',
+        'doctype': 'OGG video',
+        'mimetype': 'video/ogg'
+    },
+    {
+        'ext': '.ogx',
+        'doctype': 'OGG',
+        'mimetype': 'application/ogg'
+    },
+    {
+        'ext': '.pdf',
+        'doctype': 'Adobe Portable Document Format (PDF)',
+        'mimetype': 'application/pdf'
+    },
+    {
+        'ext': '.ppt',
+        'doctype': 'Microsoft PowerPoint',
+        'mimetype': 'application/vnd.ms-powerpoint'
+    },
+    {
+        'ext': '.rar',
+        'doctype': 'RAR archive',
+        'mimetype': 'application/x-rar-compressed'
+    },
+    {
+        'ext': '.rtf',
+        'doctype': 'Rich Text Format (RTF)',
+        'mimetype': 'application/rtf'
+    },
+    {
+        'ext': '.sh',
+        'doctype': 'Bourne shell script',
+        'mimetype': 'application/x-sh'
+    },
+    {
+        'ext': '.svg',
+        'doctype': 'Scalable Vector Graphics (SVG)',
+        'mimetype': 'image/svg+xml'
+    },
+    {
+        'ext': '.swf',
+        'doctype': 'Small web format (SWF) or Adobe Flash document',
+        'mimetype': 'application/x-shockwave-flash'
+    },
+    {
+        'ext': '.tar',
+        'doctype': 'Tape Archive (TAR)',
+        'mimetype': 'application/x-tar'
+    },
+    {
+        'ext': '.tif',
+        'doctype': 'Tagged Image File Format (TIFF)',
+        'mimetype': 'image/tif'
+    },
+    {
+        'ext': '.tiff',
+        'doctype': 'Tagged Image File Format (TIFF)',
+        'mimetype': 'image/tiff'
+    },
+    {
+        'ext': '.ttf',
+        'doctype': 'TrueType Font',
+        'mimetype': 'font/ttf'
+    },
+    {
+        'ext': '.vsd',
+        'doctype': 'Microsft Visio',
+        'mimetype': 'application/vnd.visio'
+    },
+    {
+        'ext': '.wav',
+        'doctype': 'Waveform Audio Format',
+        'mimetype': 'audio/x-wav'
+    },
+    {
+        'ext': '.weba',
+        'doctype': 'WEBM audio',
+        'mimetype': 'audio/webm'
+    },
+    {
+        'ext': '.webm',
+        'doctype': 'WEBM video',
+        'mimetype': 'video/webm'
+    },
+    {
+        'ext': '.webp',
+        'doctype': 'WEBP image',
+        'mimetype': 'image/webp'
+    },
+    {
+        'ext': '.woff',
+        'doctype': 'Web Open Font Format (WOFF)',
+        'mimetype': 'font/woff'
+    },
+    {
+        'ext': '.woff2',
+        'doctype': 'Web Open Font Format (WOFF)',
+        'mimetype': 'font/woff2'
+    },
+    {
+        'ext': '.xhtml',
+        'doctype': 'XHTML',
+        'mimetype': 'application/xhtml+xml'
+    },
+    {
+        'ext': '.xls',
+        'doctype': 'Microsoft Excel',
+        'mimetype': 'application/vnd.ms-excel'
+    },
+    {
+        'ext': '.xml',
+        'doctype': 'XML',
+        'mimetype': 'application/xml'
+    },
+    {
+        'ext': '.xul',
+        'doctype': 'XUL',
+        'mimetype': 'application/vnd.mozilla.xul+xml'
+    },
+    {
+        'ext': '.zip',
+        'doctype': 'ZIP archive',
+        'mimetype': 'application/zip'
+    },
+    {
+        'ext': '.3gp',
+        'doctype': '3GPP audio/video container',
+        'mimetype': 'video/3gpp audio/3gpp if it does not contain video'
+    },
+    {
+        'ext': '.3g2',
+        'doctype': '3GPP2 audio/video container',
+        'mimetype': 'video/3gpp2 audio/3gpp2 if it does not contain video'
+    },
+    {
+        'ext': '.7z',
+        'doctype': '7-zip archive',
+        'mimetype': 'application/x-7z-compressed'
+    }
+}

@@ -3,23 +3,25 @@
 
 import os
 import stat
+import subprocess
 import xattr
 from chardet.universaldetector import UniversalDetector
 from models import File
 
 
-def traverse(dir):
-    for root, dirs, files in os.walk(".", topdown=False):
+def traverse(target_dir):
+    for root, dirs, files in os.walk(target_dir, topdown=False):
         for name in files:
             info = finfo(os.path.join(root, name))
             print(info)
 
 
-def traverse_gen(dir):
-    # Write list of files to traverse to tmp_file
+def traverse_generator(target_dir):
+    # Write list of files to traverse to tmp_file(s)
+    # Prevents loading huge list of files into memory.
     tmp_list = './tmp_list.txt'
     with open(tmp_list, 'w') as f:
-        for root, dirs, files in os.walk(".", topdown=False):
+        for root, dirs, files in os.walk(target_dir, topdown=False):
             for name in files:
                 f.write(os.path.join(root, name) + '\n')
 
@@ -33,6 +35,17 @@ def traverse_gen(dir):
         os.popen('rm ' + tmp_list)
 
 
+def traverse_generator_cleanup(target_dir):
+    """
+        Just want to get rid of the tmp file(s) created for
+        the directory tree traversal with a separate function.
+    """
+    try:
+        subprocess.call(['rm', '-f', target_dir])
+    except IOError as err:
+        print(err)
+
+
 def detect_file_encoding(fname):
     # Heuristic, takes forever, run async
     detector = UniversalDetector()
@@ -43,6 +56,10 @@ def detect_file_encoding(fname):
     detector.close()
     print(fname, 'File Encoding:', detector.result)
     return detector.result
+
+
+def detect_mime_type(fname):
+    pass
 
 
 def finfo(fname):

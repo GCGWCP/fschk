@@ -86,8 +86,4 @@ ENV/
 .spyderproject
 
 # Rope project settings
-<<<<<<< HEAD
 .ropeproject
-=======
-.ropeproject
->>>>>>> 02c0deedb710993b684f4b432b74f8ef5bc5687d
