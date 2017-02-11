@@ -28,6 +28,9 @@ class File(Base):
     sha256 = Column(String, nullable=True)
     sha512 = Column(String, nullable=True)
 
+    def __repr__(self):
+        return "<File (file_name='%s', root_path='%s', size='%d', permissions='%d', created='%s', last_modified='%s', last_accessed='%s', owner='%d', group='%d', inode='%d', file_type='%s', ext_attr='%s', sticky_bit='%s', encoding='%s', sha256='%s', sha512='%s')>" % (self.file_name, self.root_path, self.size, self.permissions, self.created, self.last_modified, self.owner, self.group, self.inode, self.created, self.last_modified, self.last_accessed, self.file_type, self.ext_attr, self.sticky_bit, self.encoding, self.sha256, self.sha512)
+
 def create_table():
     
 
