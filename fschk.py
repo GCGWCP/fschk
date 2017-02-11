@@ -15,23 +15,8 @@ import optparse
 
 
 from utils import fsnav
+from utils.hash_utils import file_as_blockiter, hash_bytestr_iter
 from db.dbs import *
-
-
-# With thanks to Omnifarious
-# https://stackoverflow.com/questions/3431825/generating-an-md5-checksum-of-a-file
-def hash_bytestr_iter(bytesiter, hasher, ashexstr=False):
-    for block in bytesiter:
-        hasher.update(block)
-    return (hasher.hexdigest() if ashexstr else hasher.digest())
-
-
-def file_as_blockiter(afile, blocksize=65536):
-    with afile:
-        block = afile.read(blocksize)
-        while len(block) > 0:
-            yield block
-            block = afile.read(blocksize)
 
 
 def is_first_run():

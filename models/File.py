@@ -17,6 +17,7 @@ class File():
         self.last_accessed = ''
         self.file_type = ''
         self.ext_attr = ''
+        self.sticky_bit = ''
         self.encoding = ''
         self.sha256 = ''
         self.sha512 = ''
