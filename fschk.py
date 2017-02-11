@@ -15,6 +15,7 @@ import optparse
 
 
 from utils import fsnav
+from db.dbs import *
 
 
 # With thanks to Omnifarious
@@ -38,14 +39,12 @@ def is_first_run():
 
 
 def first_run():
-    pass
+    create_db()
+    init_tables()
 
 
 def daemon():
     pass
-
-
-
 
 
 def main():

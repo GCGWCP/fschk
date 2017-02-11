@@ -34,12 +34,14 @@ def traverse_gen(dir):
 
 
 def detect_file_encoding(fname):
+    # Heuristic, takes forever, run async
     detector = UniversalDetector()
     for line in open(fname, 'rb'):
         detector.feed(line)
         if detector.done:
             break
     detector.close()
+    print(fname, 'File Encoding:', detector.result)
     return detector.result
 
 
@@ -58,8 +60,6 @@ def finfo(fname):
     print('File Size:', f.size)
     f.permissions = oct(os.stat(fname).st_mode)[-3:]
     print('File Permissions:', f.permissions)
-    f.encoding = detect_file_encoding(fname)
-    print('File Encoding:', f.encoding)
     f.inode = info.st_ino
     print('File Inode:', f.inode)
     f.owner = info.st_uid

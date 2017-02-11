@@ -3,7 +3,7 @@
 
 class File():
     def __init__(self):
-        self.name = ''
+        self.file_name = ''
         self.root_path = ''
         self.size = ''
         self.permissions = ''
