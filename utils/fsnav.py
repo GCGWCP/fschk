@@ -10,10 +10,12 @@ from models import File
 
 
 def traverse(target_dir):
-    for root, dirs, files in os.walk(target_dir, topdown=False):
-        for name in files:
-            info = finfo(os.path.join(root, name))
-            print(info)
+
+        file_list = []
+        for root, dirs, files in os.walk(target_dir, topdown=False):
+            for name in files:
+                file_list.append(name)
+        return file_list
 
 
 def traverse_generator(target_dir):
@@ -32,7 +34,7 @@ def traverse_generator(target_dir):
     with open(tmp_list, 'r') as f:
         for line in f:
             yield f.readline().strip('\n')
-        os.popen('rm ' + tmp_list)
+    return tmp_list
 
 
 def traverse_generator_cleanup(target_dir):

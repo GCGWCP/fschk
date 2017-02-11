@@ -38,42 +38,29 @@ class TestFschk(unittest.TestCase):
 
         # Create a bunch of file names to create in our directories.
         self.test_file_names = [
-            [
-                ''.join(
-                    [str(i) for i in comb]
-                ) for comb in combs([1, 2, 3, 'a', 'b', 'c'], 3)
-            ]
+            ''.join(
+                [str(i) for i in comb]
+            ) for comb in combs([1, 2, 3, 'a', 'b', 'c'], 3)
         ]
 
-        self.test_dirs_full_paths = []
-        self.test_dirs_full_paths.append(
-            [os.path.join(self.test_root_dir, test_dirs_first_branch)]
-        )
-
-        for test_dir in self.test_dirs_full_paths:
-            for test_second_branch_dir in self.test_dirs_second_branch:
-                self.test_dirs_full_paths.append(
-                    [os.path.join(test_dir, test_second_branch_dir)]
-                )
-
-        # Build test directory tree.
+        # Build test directory tree root.
         subprocess.call(['mkdir', self.test_root_dir])
+        os.chdir(self.test_root_dir)
 
-        for test_dir in self.test_dirs_full_paths:
-            subprocess.call(['mkdir', test_dir])
+        # Populate the test directory with files.
+        for name in self.test_file_names:
+            subprocess.call(['touch', name])
+        os.chdir('..')
 
-        # Populate test directories with files.
-        for test_dir in self.test_dirs_full_paths:
-            for test_file in test_file_names:
-                subprocess.call(['touch', test_file])
+        return self
 
     def test_traverse_dir(self):
-        test_file_list = []
-        test_traverse_file_list = travese(self.test_root_dir)
-        assertEqual(test_file_list, test_traverse_file_list)
+        test_traverse_file_list = fsnav.traverse(self.test_root_dir)
+        print(test_traverse_file_list)
+        self.assertEqual(self.test_file_names, test_traverse_file_list)
 
     def test_finfo(self):
-        assertEqual(1,1)
+        self.assertEqual(1, 1)
 
     def tearDown(self):
         # Delete dir and files for testing.
