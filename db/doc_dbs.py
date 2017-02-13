@@ -24,3 +24,10 @@ def get_scan_result(filters={}):
         scan = scans.find_one(filters)
     return scan
 
+
+def main():
+    pass
+
+
+if __name__ == '__main__':
+    main()

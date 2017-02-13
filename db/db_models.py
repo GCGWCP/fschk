@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.postgresql import JSON
 
@@ -43,6 +43,7 @@ class OS(object):
 
     id = Column(Integer, primary_key=True)
     uname = Column(String, nullable=True)
+    apis = Column(JSON, nullable=True)
 
     def __repr__(self):
         return "<OS (uname='%s')>" % (self.uname)
@@ -52,7 +53,10 @@ class Process(object):
     __tablename__ = 'processes'
 
     id = Column(Integer, primary_key=True)
+    user = Column(Integer, nullable=True)
     pid = Column(Integer, nullable=True)
+    time_started = Column(DateTime, nullable=True)
+    command = Column(String, nullable=True)
 
     def __repr__(self):
         return "<OS (pid='%s')>" % (self.pid)
@@ -63,7 +67,14 @@ class Kmod(object):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=True)
+    version = Column(String, nullable=True)
     file = Column(Integer, ForeignKey(File.id), nullable=True)
+    index = Column(Integer, nullable=True)
+    references = Column(Integer, nullable=True)
+    address = Column(String, nullable=True)
+    uuid = Column(String, nullable=True)
+    linked_against = Column(String, nullable=True)
+    description = Column(String, nullable=True)
 
     def __repr__(self):
         return "<KernelModule (name='%s')>" % (self.name)
@@ -80,7 +91,7 @@ class Node(object):
         return "<Info (name='%s')>" % (self.info)
 
 
-class Device(Model):
+class Device(object):
     __tablename__ = 'device'
 
     id = Column(Integer, primary_key=True)
@@ -115,7 +126,89 @@ class Device(Model):
         self.specs = specs
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        return "<Device (id='%d')>" % self.id
+
+
+class TCPSYNPacketSignature(object):
+    __tablename__ = 'tcp_syn_packet_sig'
+
+    id = Column(Integer, primary_key=True)
+    ip_ttl = Column(Integer)
+    ip_tos = Column(Integer)
+    ip_total_length = Column(Integer)
+    ip_flags = Column(Integer)
+    tcp_window_size = Column(Integer)
+    # TODO: Determine whether to store individual options
+    # or options segment of packet and parse elsewhere.
+    tcp_options = Column(Integer)
+
+    def __init__(self, ip_ttl, ip_tos, ip_total_length, ip_flags, tcp_window_size, tcp_options):
+        self.ip_ttl = ip_ttl
+        self.ip_tos = ip_tos
+        self.ip_total_length = ip_total_length
+        self.ip_flags = ip_flags
+        self.tcp_window_size = tcp_window_size
+        self.tcp_options = tcp_options
+
+    def __repr__(self):
+        return "<TCPSYNPacketSignature (id='%d')>" % self.id
+
+
+class DNSFingerPrint(object):
+    __tablename__ = 'dns_fingerprint'
+
+    id = Column(Integer, primary_key=True)
+    public_dns_ip = Column(Integer, nullable=True)
+    public_dns_host = Column(String(128), nullable=True)
+    ipv6_lookup = Column(Boolean, nullable=True)
+    server_country = Column(Float, nullable=True)
+    server_region = Column(Float, nullable=True)
+    server_isp = Column(String(64), nullable=True)
+    server_organization = Column(String(64), nullable=True)
+    server_as_number = Column(String(64), nullable=True)
+    server_domain = Column(String(64), nullable=True)
+    provider = Column(String(64), nullable=True)
+
+    def __init__(self, public_dns_ip, public_dns_host, ipv6_lookup, server_country, server_region, server_isp, server_organization, server_as_number, server_domain, provider):
+        self.public_dns_ip = public_dns_ip
+        self.public_dns_host = public_dns_host
+        self.ipv6_lookup = ipv6_lookup
+        self.server_country = server_country
+        self.server_region = server_region
+        self.server_isp = server_isp
+        self.server_organization = server_organization
+        self.server_as_number = server_as_number
+        self.server_domain = server_domain
+        self.provider = provider
+
+    def __repr__(self):
+        return "<DNSFingerPrint (id='%d')>" % self.id
+
+
+class IPv4Address(object):
+    __tablename__ = 'ipv4_addr'
+
+    id = Column(Integer, primary_key=True)
+    ipv4_addr_int = Column(Integer, nullable=True)
+
+    def __init__(self, ipv4_addr):
+        self.ipv4_addr = ipv4_addr
+
+    def __repr__(self):
+        return "<IPv4Address (id='%d')>" % self.id
+
+
+class Connection(object):
+    __tablename__ = 'connection'
+
+    id = Column(Integer, primary_key=True)
+    source = Column(ForeignKey(IPv4Address.id), nullable=True)
+    source_text = Column(String, nullable=True)
+    dest = Column(ForeignKey(IPv4Address.id), nullable=True)
+    dest_text = Column(String, nullable=True)
+
+    def __repr__(self):
+        return "<Connection (id='%d')>" % self.id
 
 
 def main():
