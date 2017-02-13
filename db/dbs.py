@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.ext.declarative import declarative_base
 from db.db_models import File
 from config import Config
-Base = declarative_base()
+
 
 app = Config
 app.set_env(app, 'dev')
@@ -12,7 +12,6 @@ conf = app.conf
 
 
 def connect(user, password, db, host='localhost', port=5432):
-    # url = 'postgresql://' + user + ':' + password + '@' + host + ':' + port + '/' + db
     url = 'postgresql://{}:{}@{}:{}/{}'
     url = url.format(user, password, host, port, db)
     con = create_engine(url, client_encoding='utf8')
@@ -28,6 +27,11 @@ def fschk_connect():
         conf['PG_HOST'],
         conf['PG_PORT']
     )
+
+
+def create_table(table, model):
+    con, meta = fschk_connect()
+
 
 
 def select(table=None, column=[], value=[]):
