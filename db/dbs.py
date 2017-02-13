@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
-from db.db_models import File
+from db import db_models
 from config import Config
 
 
@@ -29,7 +29,7 @@ def fschk_connect():
     )
 
 
-def create_table(table, model):
+def create_table(model):
     con, meta = fschk_connect()
 
     Base = declarative_base()
@@ -85,6 +85,12 @@ def db_is_instantiated():
         return False
     except KeyError:
         return True
+
+
+def instantiate_db():
+    for model in db_models:
+        create_table(model)
+    pass
 
 
 def main():
