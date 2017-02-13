@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
 
 
-class File(Base):
+class File(object):
     __tablename__ = 'files'
 
     id = Column(Integer, primary_key=True)
@@ -25,6 +25,17 @@ class File(Base):
 
     def __repr__(self):
         return "<File (file_name='%s', root_path='%s', size='%d', permissions='%d', created='%s', last_modified='%s', last_accessed='%s', owner='%d', group='%d', inode='%d', file_type='%s', ext_attr='%s', sticky_bit='%s', encoding='%s', sha256='%s', sha512='%s')>" % (self.file_name, self.root_path, self.size, self.permissions, self.created, self.last_modified, self.owner, self.group, self.inode, self.created, self.last_modified, self.last_accessed, self.file_type, self.ext_attr, self.sticky_bit, self.encoding, self.sha256, self.sha512)
+
+
+class Kmod(object):
+    __tablename__ = 'kernel_modules'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=True)
+    file = Column(Integer, ForeignKey(File.id), nullable=True)
+
+    def __repr__(self):
+        return "<Kernel Module (name='%s')>" % (self.name)
 
 
 def main():

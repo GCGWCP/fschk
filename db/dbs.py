@@ -32,6 +32,13 @@ def fschk_connect():
 def create_table(table, model):
     con, meta = fschk_connect()
 
+    Base = declarative_base()
+
+    class TemporaryModel(model, Base):
+        __tablename__ = model.__tablename__
+
+    Base.metadata.create_all(bind=con)
+    con.close()
 
 
 def select(table=None, column=[], value=[]):

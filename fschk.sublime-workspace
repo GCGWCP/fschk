@@ -4,8 +4,36 @@
 		"selected_items":
 		[
 			[
+				"pri",
+				"primary_key"
+			],
+			[
 				"tmp",
-				"tmp_file"
+				"tmp_file_list\tstatement"
+			],
+			[
+				"decal",
+				"declarative_base\timport"
+			],
+			[
+				"par",
+				"parser\tstatement"
+			],
+			[
+				"parse",
+				"parse_args\tfunction"
+			],
+			[
+				"con",
+				"conf"
+			],
+			[
+				"table",
+				"tables"
+			],
+			[
+				"db",
+				"db_is_instantiated\tfunction"
 			],
 			[
 				"app",
@@ -132,10 +160,6 @@
 				"clean_article_paragraphs\tfunction"
 			],
 			[
-				"con",
-				"content"
-			],
-			[
 				"query",
 				"query_string\tstatement"
 			],
@@ -188,52 +212,24 @@
 	"buffers":
 	[
 		{
-			"contents": "#!/usr/bin/env python\n\nfrom sqlalchemy import create_engine, MetaData\nfrom sqlalchemy.orm import relationship, backref\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom db.db_models import File\nfrom config import Config\nBase = declarative_base()\n\napp = Config\napp.set_env(app, 'dev')\n\n\ndef connect(user, password, db, host='localhost', port=5432):\n    url = 'postgresql://' + user + ':' + password + '@' + host + ':' + port + '/' + db\n    con = create_engine(url, client_encoding='utf8')\n    meta = MetaData(bind=con, reflect=True)\n    return con, meta\n\n\ndef select(table, column=[], value=[]):\n    con, meta = connect(\n        app.conf['POSTGRES_USER'],\n        app.conf['POSTGRES_PWORD'],\n        app.conf['POSTGRES_DB'],\n        app.conf['POSTGRES_HOST'],\n        app.conf['POSTGRES_PORT']\n    )\n    if not column:\n        s = meta.tables[table]\n        result = s.execute()\n    elif column and not value:\n        s = meta.tables[table]\n        result = s.execute()\n    elif column and value:\n        s = meta.tables[table]\n        result = s.execute()\n\n    con.close()\n    return result\n\n\ndef insert_row(table, columns={}):\n    con, meta = connect(\n        app.conf['POSTGRES_USER'],\n        app.conf['POSTGRES_PWORD'],\n        app.conf['POSTGRES_DB']\n    )\n    cols = [columns]\n    con.execute(meta.tables[table].insert(), cols)\n    con.close()\n\n\ndef insert_rows(table, columns={}):\n    con, meta = connect(\n        app.conf['POSTGRES_USER'],\n        app.conf['POSTGRES_PWORD'],\n        app.conf['POSTGRES_DB']\n    )\n    cols = [columns]\n    for col in cols:\n        con.execute(meta.tables[table].insert(), col)\n    con.close()\n\n\ndef update_row(table, columns={}):\n    con, meta = connect(\n        app.conf['POSTGRES_USER'],\n        app.conf['POSTGRES_PWORD'],\n        app.conf['POSTGRES_DB']\n    )\n    # select -> insert\n    con.close()\n\n\ndef instantiate_db():\n    try:\n        select('files')\n        return False\n    except KeyError:\n        return True\n\n\ndef main():\n    pass\n\n\nif __name__ == '__main__':\n    main()\n",
+			"contents": "#!/usr/bin/env python\n\nfrom sqlalchemy import create_engine, MetaData, Table\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom db.db_models import File\nfrom config import Config\n\n\napp = Config\napp.set_env(app, 'dev')\nconf = app.conf\n\n\ndef connect(user, password, db, host='localhost', port=5432):\n    url = 'postgresql://{}:{}@{}:{}/{}'\n    url = url.format(user, password, host, port, db)\n    con = create_engine(url, client_encoding='utf8')\n    meta = MetaData(bind=con, reflect=True)\n    return con, meta\n\n\ndef fschk_connect():\n    return connect(\n        conf['PG_USER'],\n        conf['PG_PWORD'],\n        conf['PG_DB'],\n        conf['PG_HOST'],\n        conf['PG_PORT']\n    )\n\n\ndef create_table(model):\n    con, meta = fschk_connect()\n    Base = declarative_base()\n\n    class TableFactory(model, Base):\n        __tablename__ = model.__tablename__\n\n    Base.metadata.create_all(bind=con)\n    con.close()\n\n\ndef select(table=None, column=[], value=[]):\n    con, meta = fschk_connect()\n    if not column:\n        s = meta.tables[table]\n        result = s.execute()\n        print(result)\n    elif column and not value:\n        s = meta.tables[table]\n        result = s.execute()\n    elif column and value:\n        s = meta.tables[table]\n        result = s.execute()\n\n    con.close()\n    return result\n\n\ndef insert_row(table, columns={}):\n    con, meta = fschk_connect()\n    cols = [columns]\n    con.execute(meta.tables[table].insert(), cols)\n    con.close()\n\n\ndef insert_rows(table, columns={}):\n    con, meta = fschk_connect()\n    cols = [columns]\n    for col in cols:\n        con.execute(meta.tables[table].insert(), col)\n    con.close()\n\n\ndef update_row(table, columns={}):\n    con, meta = fschk_connect()\n    # select -> insert\n    con.close()\n\n\ndef db_is_instantiated():\n    try:\n        select()\n        return False\n    except KeyError:\n        return True\n\n\ndef main():\n    pass\n\n\nif __name__ == '__main__':\n    main()\n",
 			"file": "db/dbs.py",
-			"file_size": 2024,
-			"file_write_time": 131314474680000000,
+			"file_size": 1777,
+			"file_write_time": 131314579960000000,
 			"settings":
 			{
-				"buffer_size": 2037,
-				"encoding": "UTF-8",
+				"buffer_size": 1937,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "#!/usr/bin/env python\n\n\nclass DirTree():\n    def __init__(self):\n        self.root = ''\n        self.depth = ''\n        self.graph = {}\n        self.total_dirs = ''\n        self.total_files = ''\n\n        return self\n\n\nclass DirBranch():\n    def __init__(self):\n        self.root = ''\n        self.depth = ''\n        self.graph = {}\n        self.total_dirs = ''\n\n        return self\n\n\nif __name__ == '__main__':\n    pass\n",
-			"file": "models/Directories.py",
-			"file_size": 390,
-			"file_write_time": 131312905200000000,
-			"settings":
-			{
-				"buffer_size": 420,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": ".gitignore",
-			"settings":
-			{
-				"buffer_size": 1057,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "fschk.py",
-			"settings":
-			{
-				"buffer_size": 1201,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
+			"contents": "#!/usr/bin/env python3\n\n\nimport os\nimport stat\nimport subprocess\nimport xattr\nfrom chardet.universaldetector import UniversalDetector\nfrom models import File\n\n\ndef traverse(target_dir):\n\n        file_list = []\n        for root, dirs, files in os.walk(target_dir, topdown=False):\n            for name in files:\n                file_list.append(name)\n        return file_list\n\n\ndef traverse_gen(target_dir):\n    # Write list of files to traverse to tmp_file(s)\n    # Prevents loading huge list of files into memory.\n    tmp_list = './tmp_list.txt'\n    with open(tmp_list, 'w') as f:\n        for root, dirs, files in os.walk(target_dir, topdown=False):\n            for name in files:\n                f.write(os.path.join(root, name) + '\\n')\n\n    # Get line count for generator loop without spending the generator\n    # line_count = int(os.popen('wc -l ' + tmp_list).read().split()[0])\n\n    # Generator from tmp_list of /paths/to/files to operate on\n    with open(tmp_list, 'r') as f:\n        for line in f:\n            yield f.readline().strip('\\n')\n    return tmp_list\n\n\ndef traverse_gen_cleanup(target_dir):\n    \"\"\"\n        Just want to get rid of the tmp file(s) created for\n        the directory tree traversal with a separate function.\n    \"\"\"\n    try:\n        tmp_file_list = open('./tmp_list.txt', 'r')\n        tmp_file_list.close()\n    except FileNotFoundError:\n        print('No tmp_list.txt')\n    except IOError as err:\n        print(err)\n    subprocess.call(['rm', '-f', './tmp_list.txt'])\n    return 'tmp_list cleaned'\n\n\ndef detect_file_encoding(fname):\n    # Heuristic, takes forever, run async\n    detector = UniversalDetector()\n    for line in open(fname, 'rb'):\n        detector.feed(line)\n        if detector.done:\n            break\n    detector.close()\n    print(fname, 'File Encoding:', detector.result)\n    return detector.result\n\n\ndef detect_mime_type(fname):\n    pass\n\n\ndef finfo(fname):\n    f = File\n    info = os.stat(fname)\n    print('File Name:', fname)\n    name = fname.split('/')\n    file_name = name[len(name) - 1]\n    f.name = file_name\n    print('File Name:', f.name)\n    root_path = os.path.realpath(fname).split('/')\n    f.root_path = '/'.join(root_path[0:len(root_path) - 1]) + '/'\n    print('File Root Path:', f.root_path)\n    f.size = info.st_size\n    print('File Size:', f.size)\n    f.permissions = oct(os.stat(fname).st_mode)[-3:]\n    print('File Permissions:', f.permissions)\n    f.inode = info.st_ino\n    print('File Inode:', f.inode)\n    f.owner = info.st_uid\n    print('File Owner:', f.owner)\n    f.group = info.st_gid\n    print('File Group Owner:', f.group)\n    f.last_modified = info.st_mtime\n    print('File Last Modified:', f.last_modified)\n    f.file_type = stat.S_IFMT(info.st_mode)\n    print('File Type:', f.file_type)\n    f.ext_attr = xattr.xattr(fname)\n    print('File Extended Attributes', f.ext_attr.keys())\n    return f\n\n\ndef main():\n    pass\n\n\nif __name__ == '__main__':\n    main()\n",
 			"file": "utils/fsnav.py",
+			"file_size": 2910,
+			"file_write_time": 131314490490000000,
 			"settings":
 			{
-				"buffer_size": 2910,
-				"encoding": "UTF-8",
+				"buffer_size": 2934,
 				"line_ending": "Unix"
 			}
 		},
@@ -241,25 +237,16 @@
 			"file": "db/db_models.py",
 			"settings":
 			{
-				"buffer_size": 1654,
-				"encoding": "UTF-8",
+				"buffer_size": 1865,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "config.py",
+			"file": "fschk.py",
 			"settings":
 			{
-				"buffer_size": 1270,
+				"buffer_size": 1337,
 				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "models/File.py",
-			"settings":
-			{
-				"buffer_size": 611,
 				"line_ending": "Unix"
 			}
 		}
@@ -271,7 +258,7 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 167.0,
+		"height": 187.0,
 		"last_filter": "rem",
 		"selected_items":
 		[
@@ -308,38 +295,38 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/schroder/work/fschk/app",
-		"/Users/schroder/work/fschk/constants",
-		"/Users/schroder/work/fschk/db",
-		"/Users/schroder/work/fschk/models",
-		"/Users/schroder/work/fschk/tests",
+		"/Users/schroder/work/fschk",
 		"/Users/schroder/work/fschk/utils"
 	],
 	"file_history":
 	[
+		"/Users/schroder/work/fschk/db/db_models.py",
+		"/Users/schroder/work/fschk/config.py",
+		"/Users/schroder/work/fschk/models/File.py",
+		"/Users/schroder/work/fschk/utils/parse_args.py",
+		"/Users/schroder/work/fschk/constants/mimetypes.json",
+		"/Users/schroder/work/fschk/.gitignore",
+		"/Users/schroder/work/fschk/fschk.sublime-project",
+		"/Users/schroder/work/fschk/models/Directories.py",
 		"/Users/schroder/work/fschk/utils/fsnav.py",
 		"/Users/schroder/work/fschk/app/config.py",
 		"/Users/schroder/work/fschk/utils/diff_utils.py",
 		"/Users/schroder/work/fschk/tests/hash_utils_tests.py",
 		"/Users/schroder/work/fschk/test_fschk.py",
-		"/Users/schroder/work/fschk/constants/mimetypes.json",
 		"/Users/schroder/work/fschk/constants/file_extensions.json",
 		"/Users/schroder/work/fschk/db/dbs.py",
 		"/Users/schroder/work/fschk/fschk.py",
-		"/Users/schroder/work/fschk/models/File.py",
 		"/Users/schroder/work/fschk/constants/__init__.py",
 		"/Users/schroder/work/fschk/utils/hash_utils.py",
 		"/Users/schroder/work/fschk/tests/fsnav_test.py",
 		"/Users/schroder/work/fschk/__init__.py",
 		"/Users/schroder/work/fschk/app/__init__.py",
 		"/Users/schroder/work/fschk/tests/__init__.py",
-		"/Users/schroder/work/fschk/models/Directories.py",
 		"/Users/schroder/work/fschk/models/Opsys.py",
 		"/Users/schroder/work/fschk/db/models.py",
 		"/Users/schroder/work/fschk/config",
 		"/Users/schroder/work/fschk/docker-entrypoint.sh",
 		"/Users/schroder/work/fschk/Dockerfile",
-		"/Users/schroder/work/fschk/.gitignore",
 		"/Users/schroder/work/fschk/db/db_connect.py",
 		"/Users/schroder/work/fschk/db/__init__.py",
 		"/Users/schroder/work/clikipedia/wiki.py",
@@ -358,7 +345,7 @@
 	],
 	"find":
 	{
-		"height": 23.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -369,9 +356,12 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
+			"Base",
+			"\"",
+			"POSTGRES",
 			" = ''",
 			"'%s'",
 			"''",
@@ -419,11 +409,13 @@
 			"h1s"
 		],
 		"highlight": true,
-		"in_selection": true,
+		"in_selection": false,
 		"preserve_case": false,
 		"regex": true,
 		"replace_history":
 		[
+			"'",
+			"PG",
 			", ",
 			"'%s', ",
 			"Column()",
@@ -499,15 +491,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2037,
+						"buffer_size": 1937,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								294,
-								294
+								917,
+								917
 							]
 						],
 						"settings":
@@ -527,10 +519,12 @@
 									"selector": "source.python - string - constant.numeric"
 								}
 							],
-							"syntax": "Packages/Python/Python.sublime-syntax"
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 238.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
@@ -538,19 +532,19 @@
 				},
 				{
 					"buffer": 1,
-					"file": "models/Directories.py",
+					"file": "utils/fsnav.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 420,
+						"buffer_size": 2934,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								193,
-								193
+								1502,
+								1502
 							]
 						],
 						"settings":
@@ -571,38 +565,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 175.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": ".gitignore",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1057,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1046,
-								1046
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 601.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -612,190 +578,74 @@
 			"sheets":
 			[
 				{
-					"buffer": 3,
-					"file": "fschk.py",
+					"buffer": 2,
+					"file": "db/db_models.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1201,
+						"buffer_size": 1865,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								575,
-								575
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"auto_complete_triggers":
-							[
-								{
-									"characters": ".",
-									"selector": "source.python - string - comment - constant.numeric"
-								},
-								{
-									"characters": ".",
-									"selector": "source.python - string - constant.numeric"
-								}
-							],
 							"syntax": "Packages/Python/Python.sublime-syntax",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 91.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "utils/fsnav.py",
+					"buffer": 3,
+					"file": "fschk.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2910,
+						"buffer_size": 1337,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1410,
-								1410
+								460,
+								460
 							]
 						],
 						"settings":
 						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								}
+							],
 							"syntax": "Packages/Python/Python.sublime-syntax",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 245.0,
+						"translation.y": 30.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "db/db_models.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1654,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1654,
-								1654
-							]
-						],
-						"settings":
-						{
-							"auto_complete_triggers":
-							[
-								{
-									"characters": ".",
-									"selector": "source.python - string - comment - constant.numeric"
-								},
-								{
-									"characters": ".",
-									"selector": "source.python - string - constant.numeric"
-								},
-								{
-									"characters": ".",
-									"selector": "source.python - string - constant.numeric"
-								}
-							],
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "config.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1270,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								550,
-								550
-							]
-						],
-						"settings":
-						{
-							"auto_complete_triggers":
-							[
-								{
-									"characters": ".",
-									"selector": "source.python - string - comment - constant.numeric"
-								},
-								{
-									"characters": ".",
-									"selector": "source.python - string - constant.numeric"
-								}
-							],
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "models/File.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 611,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								551,
-								70
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
 					"type": "text"
 				}
 			]
@@ -877,7 +727,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},

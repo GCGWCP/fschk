@@ -18,6 +18,14 @@ def parse_args():
         help='Base directories of directory trees to scan'
     )
     parser.add_option(
+        '-i',
+        '--interval',
+        action='store',
+        type='int',
+        default='3600',
+        help='Set interval to run scans in seconds'
+    )
+    parser.add_option(
         '-l',
         '--log-session',
         action='store_true',
