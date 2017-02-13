@@ -18,7 +18,7 @@ def traverse(target_dir):
         return file_list
 
 
-def traverse_generator(target_dir):
+def traverse_gen(target_dir):
     # Write list of files to traverse to tmp_file(s)
     # Prevents loading huge list of files into memory.
     tmp_list = './tmp_list.txt'
@@ -37,13 +37,18 @@ def traverse_generator(target_dir):
     return tmp_list
 
 
-def traverse_generator_cleanup(target_dir):
+def traverse_gen_cleanup(target_dir):
     """
         Just want to get rid of the tmp file(s) created for
         the directory tree traversal with a separate function.
     """
     try:
-        subprocess.call(['rm', '-f', target_dir])
+        tmp_file_list = open('./tmp_list.txt', 'r')
+        subprocess.call(['rm', '-f', tmp_file_list])
+        return 'tmp_list cleaned'
+
+    except FileNotFoundError:
+        print('No tmp_list.txt')
     except IOError as err:
         print(err)
 

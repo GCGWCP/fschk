@@ -8,11 +8,8 @@
     4) Output results.
 """
 
-import os
 import sys
 import hashlib
-import optparse
-
 
 from utils import fsnav
 from utils.hash_utils import file_as_blockiter, hash_bytestr_iter
@@ -20,7 +17,10 @@ from db.dbs import *
 
 
 def is_first_run():
-    pass
+    if db_is_instantiated():
+        return True
+    else:
+        return False
 
 
 def first_run():
@@ -33,23 +33,30 @@ def daemon():
 
 
 def main():
-    gen = fsnav.traverse_gen('.')
-    while True:
-        try:
-            fname = next(gen)
+    if is_first_run():
+        sys.exit('Exiting: First Run: Instantiate Database')
+    else:
+        gen = fsnav.traverse_gen('.')
+        while True:
             try:
-                fsnav.finfo(fname)
+                fname = next(gen)
+                try:
+                    fsnav.finfo(fname)
 
-                with open(fname, 'rb') as f:
-                    shasum = hash_bytestr_iter(file_as_blockiter(f), hashlib.sha256(), ashexstr=True)
-                    print('File SHA256:', shasum)
-                    print()
+                    with open(fname, 'rb') as f:
+                        shasum = hash_bytestr_iter(
+                            file_as_blockiter(f),
+                            hashlib.sha256(),
+                            ashexstr=True
+                        )
+                        print('File SHA256:', shasum)
+                        print()
 
-            except FileNotFoundError:
-                pass
+                except FileNotFoundError:
+                    pass
 
-        except StopIteration:
-            sys.exit(1)
+            except StopIteration:
+                sys.exit(1)
 
 
 if __name__ == '__main__':

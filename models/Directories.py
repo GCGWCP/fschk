@@ -7,6 +7,7 @@ class DirTree():
         self.depth = ''
         self.graph = {}
         self.total_dirs = ''
+        self.total_files = ''
 
         return self
 
