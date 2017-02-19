@@ -123,10 +123,7 @@ def scan_and_store(root_dir, table):
             try:
                 write_obj_to_db(finfo(fname), table)
             except FileNotFoundError as err:
-                if err == "[Errno 2] No such file or directory: ''":
-                    print('Finished Scan.')
-                else:
-                    print(err)
+                print('Finished Scan.')
                 pass
         except StopIteration:
             break
