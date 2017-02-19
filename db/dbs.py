@@ -158,6 +158,10 @@ def update_row(table, columns={}):
     # select -> insert
 
 
+def inner_join(table_1, table_2):
+    pass
+
+
 def db_is_instantiated():
     con, meta = fschk_connect()
     tables = [table for table in meta.tables]

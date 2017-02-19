@@ -9,6 +9,7 @@ class File(object):
 
     id = Column(Integer, primary_key=True)
     file_name = Column(String, nullable=True)
+    full_path = Column(String, nullable=True)
     root_path = Column(String, nullable=True)
     size = Column(Integer, nullable=True)
     permissions = Column(Integer, nullable=True)
@@ -49,6 +50,7 @@ class File(object):
     def __repr__(self):
         return """<File (
 file_name='%s',
+full_path='%s',
 root_path='%s',
 size=%d,
 permissions=%d,
@@ -65,6 +67,7 @@ encoding='%s',
 sha256='%s',
 sha512='%s')>""" % (
             self.file_name,
+            self.full_path,
             self.root_path,
             self.size,
             self.permissions,

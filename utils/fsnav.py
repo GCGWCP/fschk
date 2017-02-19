@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
-
 import os
 import stat
-import subprocess
 import xattr
 from chardet.universaldetector import UniversalDetector
 from db import db_models, dbs
@@ -85,7 +83,9 @@ def finfo(fname):
     name = fname.split('/')
     file_name = name[len(name) - 1]
     f.file_name = file_name
-    root_path = os.path.realpath(fname).split('/')
+    full_path = os.path.realpath(fname)
+    f.full_path = full_path
+    root_path = full_path.split('/')
     f.root_path = '/'.join(root_path[0:len(root_path) - 1]) + '/'
     f.size = info.st_size
     f.permissions = info.st_mode
@@ -115,8 +115,8 @@ def write_obj_to_db(f_obj, table):
         print('Wrote:\n', f_obj, 'to DB')
 
 
-def scan_and_store(target_dir, table):
-    gen = traverse_gen(target_dir)
+def scan_and_store(root_dir, table):
+    gen = traverse_gen(root_dir)
     while True:
         try:
             fname = next(gen)
