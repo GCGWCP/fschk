@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.ext.declarative import declared_attr
 
 
 class File(object):
@@ -11,21 +12,75 @@ class File(object):
     root_path = Column(String, nullable=True)
     size = Column(Integer, nullable=True)
     permissions = Column(Integer, nullable=True)
-    created = Column(DateTime, nullable=True)
-    last_modified = Column(DateTime, nullable=True)
-    last_accessed = Column(DateTime, nullable=True)
+    created = Column(Float, nullable=True)
+    last_modified = Column(Float, nullable=True)
+    last_accessed = Column(Float, nullable=True)
     owner = Column(Integer, nullable=True)
     group = Column(Integer, nullable=True)
     inode = Column(Integer, nullable=True)
     file_type = Column(String, nullable=True)
     ext_attr = Column(String, nullable=True)
-    sticky_bit = Column(Integer, nullable=True)
+    sticky_bit = Column(Boolean, nullable=True)
     encoding = Column(String, nullable=True)
     sha256 = Column(String, nullable=True)
     sha512 = Column(String, nullable=True)
 
+    # def __init__(self):
+    #     self.id = ''
+    #     self.file_name = ''
+    #     self.root_path = ''
+    #     self.size = ''
+    #     self.permissions = ''
+    #     self.created = ''
+    #     self.last_modified = ''
+    #     self.last_accessed = ''
+    #     self.owner = ''
+    #     self.group = ''
+    #     self.inode = ''
+    #     self.file_type = ''
+    #     self.ext_attr = ''
+    #     self.sticky_bit = ''
+    #     self.encoding = ''
+    #     self.sha256 = ''
+    #     self.sha512 = ''
+
+    #     return self
+
     def __repr__(self):
-        return "<File (file_name='%s', root_path='%s', size='%d', permissions='%d', created='%s', last_modified='%s', last_accessed='%s', owner='%d', group='%d', inode='%d', file_type='%s', ext_attr='%s', sticky_bit='%s', encoding='%s', sha256='%s', sha512='%s')>" % (self.file_name, self.root_path, self.size, self.permissions, self.created, self.last_modified, self.owner, self.group, self.inode, self.created, self.last_modified, self.last_accessed, self.file_type, self.ext_attr, self.sticky_bit, self.encoding, self.sha256, self.sha512)
+        return """<File (
+file_name='%s',
+root_path='%s',
+size=%d,
+permissions=%d,
+created=%f,
+last_modified=%f,
+last_accessed=%f,
+owner=%d,
+group=%d,
+inode=%d,
+file_type=%d,
+ext_attr='%s',
+sticky_bit=%r,
+encoding='%s',
+sha256='%s',
+sha512='%s')>""" % (
+            self.file_name,
+            self.root_path,
+            self.size,
+            self.permissions,
+            self.created,
+            self.last_modified,
+            self.last_accessed,
+            self.owner,
+            self.group,
+            self.inode,
+            self.file_type,
+            self.ext_attr,
+            self.sticky_bit,
+            self.encoding,
+            self.sha256,
+            self.sha512
+        )
 
 
 class FileSystem(object):
@@ -68,7 +123,12 @@ class Kmod(object):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=True)
     version = Column(String, nullable=True)
-    file = Column(Integer, ForeignKey(File.id), nullable=True)
+
+    @declared_attr
+    def file_location(cls):
+        return(Column(Integer, ForeignKey(File.id)))
+
+    # file_location = Column(Integer, ForeignKey(File.id), nullable=True)
     index = Column(Integer, nullable=True)
     references = Column(Integer, nullable=True)
     address = Column(String, nullable=True)
@@ -133,14 +193,14 @@ class TCPSYNPacketSignature(object):
     __tablename__ = 'tcp_syn_packet_sig'
 
     id = Column(Integer, primary_key=True)
-    ip_ttl = Column(Integer)
-    ip_tos = Column(Integer)
-    ip_total_length = Column(Integer)
-    ip_flags = Column(Integer)
-    tcp_window_size = Column(Integer)
+    ip_ttl = Column(Integer, nullable=True)
+    ip_tos = Column(Integer, nullable=True)
+    ip_total_length = Column(Integer, nullable=True)
+    ip_flags = Column(Integer, nullable=True)
+    tcp_window_size = Column(Integer, nullable=True)
     # TODO: Determine whether to store individual options
     # or options segment of packet and parse elsewhere.
-    tcp_options = Column(Integer)
+    tcp_options = Column(Integer, nullable=True)
 
     def __init__(self, ip_ttl, ip_tos, ip_total_length, ip_flags, tcp_window_size, tcp_options):
         self.ip_ttl = ip_ttl
@@ -198,17 +258,18 @@ class IPv4Address(object):
         return "<IPv4Address (id='%d')>" % self.id
 
 
-class Connection(object):
-    __tablename__ = 'connection'
+# class Connection(object):
+#     __tablename__ = 'connection'
 
-    id = Column(Integer, primary_key=True)
-    source = Column(ForeignKey(IPv4Address.id), nullable=True)
-    source_text = Column(String, nullable=True)
-    dest = Column(ForeignKey(IPv4Address.id), nullable=True)
-    dest_text = Column(String, nullable=True)
+#     @declared
+#     id = Column(Integer, primary_key=True)
+#     source = Column(ForeignKey(IPv4Address.id), nullable=True)
+#     source_text = Column(String, nullable=True)
+#     dest = Column(ForeignKey(IPv4Address.id), nullable=True)
+#     dest_text = Column(String, nullable=True)
 
-    def __repr__(self):
-        return "<Connection (id='%d')>" % self.id
+#     def __repr__(self):
+#         return "<Connection (id='%d')>" % self.id
 
 
 def main():

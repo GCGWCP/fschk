@@ -6,7 +6,8 @@ import stat
 import subprocess
 import xattr
 from chardet.universaldetector import UniversalDetector
-from models import File
+from db import db_models, dbs
+from utils import hash_utils
 
 
 def traverse(target_dir):
@@ -54,7 +55,8 @@ def traverse_gen_cleanup(target_dir):
 
 
 def detect_file_encoding(fname):
-    # Heuristic, takes forever, run async
+    # Heuristic, takes forever, run async and insert into
+    # existing entry.
     detector = UniversalDetector()
     for line in open(fname, 'rb'):
         detector.feed(line)
@@ -70,33 +72,39 @@ def detect_mime_type(fname):
 
 
 def finfo(fname):
-    f = File
+    f = db_models.File()
     info = os.stat(fname)
-    print('File Name:', fname)
     name = fname.split('/')
     file_name = name[len(name) - 1]
-    f.name = file_name
-    print('File Name:', f.name)
+    f.file_name = file_name
     root_path = os.path.realpath(fname).split('/')
     f.root_path = '/'.join(root_path[0:len(root_path) - 1]) + '/'
-    print('File Root Path:', f.root_path)
     f.size = info.st_size
-    print('File Size:', f.size)
-    f.permissions = oct(os.stat(fname).st_mode)[-3:]
-    print('File Permissions:', f.permissions)
+    f.permissions = info.st_mode
     f.inode = info.st_ino
-    print('File Inode:', f.inode)
     f.owner = info.st_uid
-    print('File Owner:', f.owner)
     f.group = info.st_gid
-    print('File Group Owner:', f.group)
+    f.created = info.st_ctime
     f.last_modified = info.st_mtime
-    print('File Last Modified:', f.last_modified)
+    f.last_accessed = info.st_atime
     f.file_type = stat.S_IFMT(info.st_mode)
-    print('File Type:', f.file_type)
-    f.ext_attr = xattr.xattr(fname)
-    print('File Extended Attributes', f.ext_attr.keys())
+    ext_attr = xattr.xattr(fname)
+    if ext_attr.keys() == []:
+        f.ext_attr = 'none'
+    else:
+        f.ext_attr = ','.join(ext_attr.keys())
+    f.sticky_bit = bool(info.st_mode & 0o01000 == 512)
+    f.encoding = 'Undetermined'
+    f.sha256 = hash_utils.get_sha256(fname)
+    f.sha512 = hash_utils.get_sha512(fname)
     return f
+
+
+def write_obj_to_db(f_obj):
+    try:
+        dbs.insert_row('files', f_obj.__dict__)
+    finally:
+        print('Wrote:\n', f_obj, 'to DB')
 
 
 def main():

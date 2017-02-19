@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from sqlalchemy import create_engine, MetaData
+from sqlalchemy.sql import select
 from sqlalchemy.ext.declarative import declarative_base
 from db import db_models
 from config import Config
@@ -29,6 +30,27 @@ def fschk_connect():
     )
 
 
+def table_exists(model):
+    con, meta = fschk_connect()
+
+    Base = declarative_base()
+
+    class TemporaryModel(model, Base):
+        __tablename__ = model.__tablename__
+
+    if Base.metadata.tables:
+        return True
+    else:
+        return False
+
+
+def table_count():
+    con, meta = fschk_connect()
+
+    count = len(meta.tables)
+    return count
+
+
 def create_table(model):
     con, meta = fschk_connect()
 
@@ -38,59 +60,65 @@ def create_table(model):
         __tablename__ = model.__tablename__
 
     Base.metadata.create_all(bind=con)
-    con.close()
 
 
-def select(table=None, column=[], value=[]):
+def instantiate_db():
+    try:
+        create_table(db_models.File)
+        # create_table(db_models.FileSystem)
+        # create_table(db_models.OS)
+        # create_table(db_models.Process)
+        # create_table(db_models.Kmod)
+        # create_table(db_models.Node)
+        # create_table(db_models.Device)
+        # create_table(db_models.TCPSYNPacketSignature)
+        # create_table(db_models.DNSFingerPrint)
+        # create_table(db_models.IPv4Address)
+        # create_table(db_models.Connection)
+    finally:
+        print('Tables created')
+
+
+def select_from(table, query=None):
     con, meta = fschk_connect()
-    if not column:
-        s = meta.tables[table]
-        result = s.execute()
-        print(result)
-    elif column and not value:
-        s = meta.tables[table]
-        result = s.execute()
-    elif column and value:
-        s = meta.tables[table]
-        result = s.execute()
-
-    con.close()
+    if query:
+        result = con.execute(meta.tables[table].select(whereclause=query))
+    else:
+        result = con.execute(meta.tables[table].select())
     return result
 
 
 def insert_row(table, columns={}):
     con, meta = fschk_connect()
-    cols = [columns]
+    cols = columns
     con.execute(meta.tables[table].insert(), cols)
-    con.close()
 
 
-def insert_rows(table, columns={}):
+def insert_row_from_object(obj):
+    table = obj.__tablename__
     con, meta = fschk_connect()
-    cols = [columns]
-    for col in cols:
-        con.execute(meta.tables[table].insert(), col)
-    con.close()
+    cols = [obj.__dict__]
+    con.execute(meta.tables[table].insert(), cols)
+
+
+def insert_rows_from_objects(table, obj_set):
+    con, meta = fschk_connect()
+    cols = [obj.__dict__ for obj in obj_set]
+    con.execute(meta.tables[table].insert(), cols)
 
 
 def update_row(table, columns={}):
     con, meta = fschk_connect()
     # select -> insert
-    con.close()
 
 
 def db_is_instantiated():
-    try:
-        select()
-        return False
-    except KeyError:
+    con, meta = fschk_connect()
+    tables = [table for table in meta.tables]
+    if tables != []:
         return True
-
-
-def instantiate_db():
-    for model in db_models:
-        create_table(model)
-    pass
+    else:
+        return False
 
 
 def main():
@@ -98,4 +126,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    instantiate_db()

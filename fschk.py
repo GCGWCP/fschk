@@ -9,23 +9,21 @@
 """
 
 import sys
-import hashlib
 
-from utils import fsnav
-from utils.hash_utils import file_as_blockiter, hash_bytestr_iter
+
+from utils.fsnav import *
 from db.dbs import *
 
 
 def is_first_run():
     if db_is_instantiated():
-        return True
-    else:
         return False
+    else:
+        return True
 
 
 def first_run():
     create_db()
-    init_tables()
 
 
 def daemon():
@@ -34,24 +32,15 @@ def daemon():
 
 def main():
     if is_first_run():
-        sys.exit('Exiting: First Run: Instantiate Database')
+        print('Is first run:')
+        instantiate_db()
     else:
-        gen = fsnav.traverse_gen('.')
+        gen = traverse_gen('.')
         while True:
             try:
                 fname = next(gen)
                 try:
-                    fsnav.finfo(fname)
-
-                    with open(fname, 'rb') as f:
-                        shasum = hash_bytestr_iter(
-                            file_as_blockiter(f),
-                            hashlib.sha256(),
-                            ashexstr=True
-                        )
-                        print('File SHA256:', shasum)
-                        print()
-
+                    write_obj_to_db(finfo(fname))
                 except FileNotFoundError:
                     pass
 
