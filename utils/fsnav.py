@@ -10,6 +10,15 @@ from db import db_models, dbs
 from utils import hash_utils
 
 
+def is_first_run():
+    if dbs.db_is_instantiated():
+        return False
+    else:
+        if not os.path.exists('/var/log/fschk'):
+            os.mkdir('/var/log/fschk')
+        return True
+
+
 def traverse(target_dir):
 
         file_list = []
@@ -22,7 +31,7 @@ def traverse(target_dir):
 def traverse_gen(target_dir):
     # Write list of files to traverse to tmp_file(s)
     # Prevents loading huge list of files into memory.
-    tmp_list = './tmp_list.txt'
+    tmp_list = '/var/log/fschk/tmp_list.txt'
     with open(tmp_list, 'w') as f:
         for root, dirs, files in os.walk(target_dir, topdown=False):
             for name in files:
@@ -38,18 +47,17 @@ def traverse_gen(target_dir):
     return tmp_list
 
 
-def traverse_gen_cleanup(target_dir):
+def traverse_gen_cleanup():
     """
         Just want to get rid of the tmp file(s) created for
         the directory tree traversal with a separate function.
     """
+    tmp_list = '/var/log/fschk/tmp_list.txt'
     try:
-        tmp_file_list = open('./tmp_list.txt', 'r')
-        subprocess.call(['rm', '-f', tmp_file_list])
+        tmp_file_list = open(tmp_list, 'r')
+        tmp_file_list.close()
+        os.remove(tmp_list)
         return 'tmp_list cleaned'
-
-    except FileNotFoundError:
-        print('No tmp_list.txt')
     except IOError as err:
         print(err)
 
@@ -96,15 +104,30 @@ def finfo(fname):
     f.sticky_bit = bool(info.st_mode & 0o01000 == 512)
     f.encoding = 'Undetermined'
     f.sha256 = hash_utils.get_sha256(fname)
-    f.sha512 = hash_utils.get_sha512(fname)
+    f.sha512 = ''
     return f
 
 
-def write_obj_to_db(f_obj):
+def write_obj_to_db(f_obj, table):
     try:
-        dbs.insert_row('files', f_obj.__dict__)
+        dbs.insert_row(table, f_obj.__dict__)
     finally:
         print('Wrote:\n', f_obj, 'to DB')
+
+
+def scan_and_store(target_dir, table):
+    gen = traverse_gen(target_dir)
+    while True:
+        try:
+            fname = next(gen)
+            try:
+                write_obj_to_db(finfo(fname), table)
+            except FileNotFoundError as err:
+                print(err)
+                pass
+        except StopIteration:
+            break
+    traverse_gen_cleanup()
 
 
 def main():

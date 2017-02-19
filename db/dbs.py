@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from sqlalchemy import create_engine, MetaData
-from sqlalchemy.sql import select
 from sqlalchemy.ext.declarative import declarative_base
 from db import db_models
 from config import Config
@@ -31,6 +30,9 @@ def fschk_connect():
 
 
 def table_exists(model):
+    """
+        Check if table exists.
+    """
     con, meta = fschk_connect()
 
     Base = declarative_base()
@@ -45,13 +47,35 @@ def table_exists(model):
 
 
 def table_count():
+    """
+        Count the number of tables in the database.
+    """
     con, meta = fschk_connect()
 
     count = len(meta.tables)
     return count
 
 
+def table_seq_count(model):
+    """
+        Count the number of tables in the database.
+    """
+    con, meta = fschk_connect()
+    table_basename = model.__tablename__
+    inc = 0
+    for table in meta.tables:
+        try:
+            if table_basename == table[0:len(table_basename)]:
+                inc += 1
+        except IndexError:
+            pass
+    return inc
+
+
 def create_table(model):
+    """
+        Create a table from a class object.
+    """
     con, meta = fschk_connect()
 
     Base = declarative_base()
@@ -62,9 +86,31 @@ def create_table(model):
     Base.metadata.create_all(bind=con)
 
 
+def create_seq_table(model):
+    """
+        Create a sequential table based on a model with
+        the same basename plus an incremented suffix.
+    """
+    con, meta = fschk_connect()
+
+    increment = table_seq_count(model)
+
+    Base = declarative_base()
+
+    class TemporaryModel(model, Base):
+        __tablename__ = model.__tablename__ + '_' + str(increment)
+
+    Base.metadata.create_all(bind=con)
+
+    return TemporaryModel.__tablename__
+
+
 def instantiate_db():
+    """
+        Instantiate the database for the first run.
+    """
     try:
-        create_table(db_models.File)
+        create_seq_table(db_models.File)
         # create_table(db_models.FileSystem)
         # create_table(db_models.OS)
         # create_table(db_models.Process)
