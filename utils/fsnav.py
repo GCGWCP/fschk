@@ -18,7 +18,6 @@ def is_first_run():
 
 
 def traverse(target_dir):
-
         file_list = []
         for root, dirs, files in os.walk(target_dir, topdown=False):
             for name in files:

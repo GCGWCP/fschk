@@ -2,6 +2,7 @@
 
 import psutil
 import socket
+import os
 from ctypes import struct
 
 
@@ -24,6 +25,11 @@ def get_established_conxns():
     established_conxns = [cx for cx in conxns if cx[5] == 'ESTABLISHED']
     return established_conxns
 
+
+def conxns_to_pids():
+    # refine this when you're not exhausted.
+    data = os.popen('for ip_addr in $(netstat -tnp tcp | grep -o -P "^\w+\s+\d+\s+\d+\s+\S+\s+\S+" | grep -o -P "\S+$" | grep -o -P "\d+\.\d+\.\d+\.\d+"); do lsof -i @$ip_addr; done')
+    return data
 
 def pid_to_command(pid):
     pass

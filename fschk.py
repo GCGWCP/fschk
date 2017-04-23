@@ -26,11 +26,11 @@ def main():
         instantiate_db()
         current_table = 'files_0'
         scan_and_store('.', current_table)
-        sys.exit(1)
+        sys.exit(0)
     else:
         current_table = create_seq_table(File)
         scan_and_store('.', current_table)
-        sys.exit(1)
+        sys.exit(0)
 
 
 if __name__ == '__main__':
