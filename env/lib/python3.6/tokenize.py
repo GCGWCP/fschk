@@ -1,5 +1,0 @@
-XSym
-0098
-de242416ad8c9850c89bc07f14e29962
-/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/tokenize.py
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
