@@ -1,4 +1,4 @@
-mimetype = {
+mimetype = [
     {
         'ext': '.aac',
         'doctype': 'AAC audio file',
@@ -294,4 +294,4 @@ mimetype = {
         'doctype': '7-zip archive',
         'mimetype': 'application/x-7z-compressed'
     }
-}
+]

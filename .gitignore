@@ -93,3 +93,5 @@ env/
 config.py
 fschk.sublime-project
 fschk.sublime-workspace
+env/
+env/*

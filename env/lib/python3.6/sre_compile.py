@@ -1,1 +1,5 @@
+XSym
+0101
+860862a14c0b11af0a8fd6f2008dad3a
 /usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/sre_compile.py
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          

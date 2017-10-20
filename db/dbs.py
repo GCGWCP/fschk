@@ -12,168 +12,168 @@ conf = app.conf
 
 
 def connect(user, password, db, host='localhost', port=5432):
-    url = 'postgresql://{}:{}@{}:{}/{}'
-    url = url.format(user, password, host, port, db)
-    con = create_engine(url, client_encoding='utf8')
-    meta = MetaData(bind=con, reflect=True)
-    return con, meta
+	url = 'postgresql://{}:{}@{}:{}/{}'
+	url = url.format(user, password, host, port, db)
+	con = create_engine(url, client_encoding='utf8')
+	meta = MetaData(bind=con, reflect=True)
+	return con, meta
 
 
 def fschk_connect():
-    return connect(
-        conf['PG_USER'],
-        conf['PG_PWORD'],
-        conf['PG_DB'],
-        conf['PG_HOST'],
-        conf['PG_PORT']
-    )
+	return connect(
+		conf['PG_USER'],
+		conf['PG_PWORD'],
+		conf['PG_DB'],
+		conf['PG_HOST'],
+		conf['PG_PORT']
+	)
 
 
 def table_exists(model):
-    """
-        Check if table exists.
-    """
-    con, meta = fschk_connect()
+	"""
+		Check if table exists.
+	"""
+	con, meta = fschk_connect()
 
-    Base = declarative_base()
+	Base = declarative_base()
 
-    class TemporaryModel(model, Base):
-        __tablename__ = model.__tablename__
+	class TemporaryModel(model, Base):
+		__tablename__ = model.__tablename__
 
-    if Base.metadata.tables:
-        return True
-    else:
-        return False
+	if Base.metadata.tables:
+		return True
+	else:
+		return False
 
 
 def table_count():
-    """
-        Count the number of tables in the database.
-    """
-    con, meta = fschk_connect()
+	"""
+		Count the number of tables in the database.
+	"""
+	con, meta = fschk_connect()
 
-    count = len(meta.tables)
-    return count
+	count = len(meta.tables)
+	return count
 
 
 def table_seq_count(model):
-    """
-        Count the number of tables in the database.
-    """
-    con, meta = fschk_connect()
-    table_basename = model.__tablename__
-    inc = 0
-    for table in meta.tables:
-        try:
-            if table_basename == table[0:len(table_basename)]:
-                inc += 1
-        except IndexError:
-            pass
-    return inc
+	"""
+		Count the number of tables in the database.
+	"""
+	con, meta = fschk_connect()
+	table_basename = model.__tablename__
+	inc = 0
+	for table in meta.tables:
+		try:
+			if table_basename == table[0:len(table_basename)]:
+				inc += 1
+		except IndexError:
+			pass
+	return inc
 
 
 def create_table(model):
-    """
-        Create a table from a class object.
-    """
-    con, meta = fschk_connect()
+	"""
+		Create a table from a class object.
+	"""
+	con, meta = fschk_connect()
 
-    Base = declarative_base()
+	Base = declarative_base()
 
-    class TemporaryModel(model, Base):
-        __tablename__ = model.__tablename__
+	class TemporaryModel(model, Base):
+		__tablename__ = model.__tablename__
 
-    Base.metadata.create_all(bind=con)
+	Base.metadata.create_all(bind=con)
 
 
 def create_seq_table(model):
-    """
-        Create a sequential table based on a model with
-        the same basename plus an incremented suffix.
-    """
-    con, meta = fschk_connect()
+	"""
+		Create a sequential table based on a model with
+		the same basename plus an incremented suffix.
+	"""
+	con, meta = fschk_connect()
 
-    increment = table_seq_count(model)
+	increment = table_seq_count(model)
 
-    Base = declarative_base()
+	Base = declarative_base()
 
-    class TemporaryModel(model, Base):
-        __tablename__ = model.__tablename__ + '_' + str(increment)
+	class TemporaryModel(model, Base):
+		__tablename__ = model.__tablename__ + '_' + str(increment)
 
-    Base.metadata.create_all(bind=con)
+	Base.metadata.create_all(bind=con)
 
-    return TemporaryModel.__tablename__
+	return TemporaryModel.__tablename__
 
 
 def instantiate_db():
-    """
-        Instantiate the database for the first run.
-    """
-    try:
-        create_seq_table(db_models.File)
-        # create_table(db_models.FileSystem)
-        # create_table(db_models.OS)
-        # create_table(db_models.Process)
-        # create_table(db_models.Kmod)
-        # create_table(db_models.Node)
-        # create_table(db_models.Device)
-        # create_table(db_models.TCPSYNPacketSignature)
-        # create_table(db_models.DNSFingerPrint)
-        # create_table(db_models.IPv4Address)
-        # create_table(db_models.Connection)
-    finally:
-        print('Tables created')
+	"""
+		Instantiate the database for the first run.
+	"""
+	try:
+		create_seq_table(db_models.File)
+		# create_table(db_models.FileSystem)
+		# create_table(db_models.OS)
+		# create_table(db_models.Process)
+		# create_table(db_models.Kmod)
+		# create_table(db_models.Node)
+		# create_table(db_models.Device)
+		# create_table(db_models.TCPSYNPacketSignature)
+		# create_table(db_models.DNSFingerPrint)
+		# create_table(db_models.IPv4Address)
+		# create_table(db_models.Connection)
+	finally:
+		print('Tables created')
 
 
 def select_from(table, query=None):
-    con, meta = fschk_connect()
-    if query:
-        result = con.execute(meta.tables[table].select(whereclause=query))
-    else:
-        result = con.execute(meta.tables[table].select())
-    return result
+	con, meta = fschk_connect()
+	if query:
+		result = con.execute(meta.tables[table].select(whereclause=query))
+	else:
+		result = con.execute(meta.tables[table].select())
+	return result
 
 
 def insert_row(table, columns={}):
-    con, meta = fschk_connect()
-    cols = columns
-    con.execute(meta.tables[table].insert(), cols)
+	con, meta = fschk_connect()
+	cols = columns
+	con.execute(meta.tables[table].insert(), cols)
 
 
 def insert_row_from_object(obj):
-    table = obj.__tablename__
-    con, meta = fschk_connect()
-    cols = [obj.__dict__]
-    con.execute(meta.tables[table].insert(), cols)
+	table = obj.__tablename__
+	con, meta = fschk_connect()
+	cols = [obj.__dict__]
+	con.execute(meta.tables[table].insert(), cols)
 
 
 def insert_rows_from_objects(table, obj_set):
-    con, meta = fschk_connect()
-    cols = [obj.__dict__ for obj in obj_set]
-    con.execute(meta.tables[table].insert(), cols)
+	con, meta = fschk_connect()
+	cols = [obj.__dict__ for obj in obj_set]
+	con.execute(meta.tables[table].insert(), cols)
 
 
 def update_row(table, columns={}):
-    con, meta = fschk_connect()
-    # select -> insert
+	con, meta = fschk_connect()
+	# select -> insert
 
 
 def inner_join(table_1, table_2):
-    pass
+	pass
 
 
 def db_is_instantiated():
-    con, meta = fschk_connect()
-    tables = [table for table in meta.tables]
-    if tables != []:
-        return True
-    else:
-        return False
+	con, meta = fschk_connect()
+	tables = [table for table in meta.tables]
+	if tables != []:
+		return True
+	else:
+		return False
 
 
 def main():
-    pass
+	pass
 
 
 if __name__ == '__main__':
-    instantiate_db()
+	instantiate_db()
